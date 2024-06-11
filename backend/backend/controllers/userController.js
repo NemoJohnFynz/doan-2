@@ -3,8 +3,10 @@ import asyncHandler from "../middlewares/asyncHandler.js";
 import bcrypt from "bcryptjs";
 import createToken from "../utils/createToken.js";
 
+
+//registerUser(isAdmin: auto false)
 const registerUser = asyncHandler(async (req, res) => {
-  const { username, email, password, fullname } = req.body;
+  const { username, gender, fullname,  password, phone, email,} = req.body;
 
   if (!username || !email || !password || !fullname) {
     res.status(400);
@@ -22,9 +24,11 @@ const registerUser = asyncHandler(async (req, res) => {
   const newUser = new User({ 
     
     username, 
+    gender,
     fullname,
     email, 
-    password: hashedPassword
+    password: hashedPassword,
+    phone
   });
 
 
@@ -39,6 +43,9 @@ const registerUser = asyncHandler(async (req, res) => {
       fullname: newUser.fullname,
       email: newUser.email,
       isAdmin: newUser.isAdmin,
+      phone:newUser.phone,
+      gender: newUser.gender
+
     });
   } catch (error) {
     res.status(400);
@@ -47,6 +54,8 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 });
 
+
+//loginUser 
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
@@ -79,6 +88,8 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 });
 
+
+//loguot
 const logoutCurrentUser = asyncHandler(async (req, res) => {
   res.cookie("jwt", "", {
     httyOnly: true,
@@ -108,6 +119,8 @@ const getCurrentUserProfile = asyncHandler(async (req, res) => {
   }
 });
 
+
+// update ProfileUser
 const updateCurrentUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
 
@@ -135,6 +148,8 @@ const updateCurrentUserProfile = asyncHandler(async (req, res) => {
   }
 });
 
+
+//Admin: active or unActive User
 const updateUserActiveStatus = asyncHandler(async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -156,6 +171,8 @@ const updateUserActiveStatus = asyncHandler(async (req, res) => {
 });
 
 
+
+// delete User(don not use)
 const deleteUserById = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
 
@@ -173,6 +190,8 @@ const deleteUserById = asyncHandler(async (req, res) => {
   }
 });
 
+
+// findUser
 const getUserById = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id).select("-password");
 
@@ -184,6 +203,8 @@ const getUserById = asyncHandler(async (req, res) => {
   }
 });
 
+
+//updateUser (admin)
 const updateUserById = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
 
